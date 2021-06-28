@@ -1,9 +1,9 @@
 import fs from 'fs';
 import ts from 'typescript';
 import { create } from '@custom-elements-manifest/analyzer/src/create.js';
-import myPlugin from './index.js';
+import reactify from './index.js';
 
-const code = fs.readFileSync('fixtures/default/sourcecode/default.js').toString();
+const code = fs.readFileSync('fixtures/generic-switch.js').toString();
 
 const modules = [ts.createSourceFile(
   'my-element.js',
@@ -12,4 +12,14 @@ const modules = [ts.createSourceFile(
   true,
 )];
 
-console.log(JSON.stringify(create({modules, plugins: [myPlugin()]}), null, 2));
+console.log(JSON.stringify(create({
+  modules, 
+  plugins: [
+    reactify({
+      exclude: ['MyElement'],
+      outdir: 'react',
+      attributeMapping: {
+        'for': '_for'
+      }
+    })
+  ]}), null, 2));
